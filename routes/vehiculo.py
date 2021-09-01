@@ -9,38 +9,40 @@ VehiculoAPI = APIRouter()
 async def read_all_data():
     return conn.execute(vehiculos.select()).fetchall()
 
-@VehiculoAPI.get("/{id}")
-async def read__data(id:int):
-    valor = conn.execute(vehiculos.select().where(vehiculos.c.id == id)).fetchall()
+@VehiculoAPI.get("/{celda}")
+async def read__data(celda:int):
+    valor = conn.execute(vehiculos.select().where(vehiculos.c.celda == celda)).fetchall()
     if valor:
         return valor
     else:
-        return HTTPException(status_code=404, detail="item no encotrado")
+        raise HTTPException(status_code=404, detail="item no encotrado")
         
 
 @VehiculoAPI.post("/")
 async def write_data(vehiculo:Vehiculo):
+    try:
         conn.execute(vehiculos.insert().values(
+            celda=vehiculo.celda,
             placa=vehiculo.placa,
-            celda=vehiculo.celda
         ))
         return conn.execute(vehiculos.select()).fetchall()
+    except :
+         raise HTTPException(status_code=404, detail="Celda ocupada")
 
-@VehiculoAPI.put("/{id}")
-async def update_data(id:int, vehiculo:Vehiculo):
+@VehiculoAPI.put("/{celda}")
+async def update_data(celda:int, vehiculo:Vehiculo):
 
-        values =conn.execute(vehiculos.update().values(
+        conn.execute(vehiculos.update().where(vehiculos.c.celda == celda).values(
             placa=vehiculo.placa,
-            celda=vehiculo.celda
         ))
-        values = conn.execute(vehiculos.select().where(vehiculos.c.id == id)).fetchall()
+        values = conn.execute(vehiculos.select().where(vehiculos.c.celda == celda)).fetchall()
         if values:
             return values
         else:
-            return HTTPException(status_code=404, detail="item no encotrado")
+            raise HTTPException(status_code=404, detail="item no encotrado")
 
 
-@VehiculoAPI.delete("/{id}")
-async def remove_vehiculo(id:int):
-    conn.execute(vehiculos.delete().where(vehiculos.c.id==id))
+@VehiculoAPI.delete("/{celda}")
+async def remove_vehiculo(celda:int):
+    conn.execute(vehiculos.delete().where(vehiculos.c.celda==celda))
     return conn.execute(vehiculos.select()).fetchall()

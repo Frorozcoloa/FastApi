@@ -3,7 +3,7 @@ from typing import Optional
 from datetime import datetime
 
 class Vehiculo(BaseModel):
-    id: Optional[int]
+    celda:int 
     placa:str
     fecha:datetime = datetime.now()
-    celda:int 
+    
