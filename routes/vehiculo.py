@@ -11,7 +11,11 @@ async def read_all_data():
 
 @VehiculoAPI.get("/{id}")
 async def read__data(id:int):
-    return conn.execute(vehiculos.select().where(vehiculos.c.id == id)).fetchall()
+    valor = conn.execute(vehiculos.select().where(vehiculos.c.id == id)).fetchall()
+    if valor:
+        return valor
+    else:
+        return HTTPException(status_code=404, detail="item no encotrado")
         
 
 @VehiculoAPI.post("/")
@@ -25,11 +29,16 @@ async def write_data(vehiculo:Vehiculo):
 @VehiculoAPI.put("/{id}")
 async def update_data(id:int, vehiculo:Vehiculo):
 
-        conn.execute(vehiculos.update().values(
+        values =conn.execute(vehiculos.update().values(
             placa=vehiculo.placa,
             celda=vehiculo.celda
         ))
-        return conn.execute(vehiculos.select().where(vehiculos.c.id == id)).fetchall()
+        values = conn.execute(vehiculos.select().where(vehiculos.c.id == id)).fetchall()
+        if values:
+            return values
+        else:
+            return HTTPException(status_code=404, detail="item no encotrado")
+
 
 @VehiculoAPI.delete("/{id}")
 async def remove_vehiculo(id:int):
