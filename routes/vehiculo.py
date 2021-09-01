@@ -11,7 +11,7 @@ async def read_all_data():
 
 @VehiculoAPI.get("/{id}")
 async def read__data(id:int):
-    return conn.execute(vehiculos.select().where(vehiculos.c.i == id)).fetchall()
+    return conn.execute(vehiculos.select().where(vehiculos.c.id == id)).fetchall()
         
 
 @VehiculoAPI.post("/")
@@ -29,4 +29,9 @@ async def update_data(id:int, vehiculo:Vehiculo):
             placa=vehiculo.placa,
             celda=vehiculo.celda
         ))
-        return conn.execute(vehiculos.select().where(vehiculos.c.i == id)).fetchall()
+        return conn.execute(vehiculos.select().where(vehiculos.c.id == id)).fetchall()
+
+@VehiculoAPI.delete("/{id}")
+async def remove_vehiculo(id:int):
+    conn.execute(vehiculos.delete().where(vehiculos.c.id==id))
+    return conn.execute(vehiculos.select()).fetchall()
