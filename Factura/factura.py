@@ -2,7 +2,7 @@ import pdfkit
 from jinja2 import Environment, FileSystemLoader
 from uuid import uuid4 as uuid
 
-env = Environment(loader=FileSystemLoader("template"))
+env = Environment(loader=FileSystemLoader("./Factura/template"))
 template = env.get_template('factura.html')
 
 def create_pdf(datos):
@@ -11,7 +11,7 @@ def create_pdf(datos):
     datos['id'] = id
     html = template.render(datos)
     config = pdfkit.configuration(wkhtmltopdf="C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe")
-    pdfkit.from_string(html, f'facturas/{id}.pdf', configuration=config)
+    pdfkit.from_string(html, f'./Factura/facturas/{id}.pdf', configuration=config)
 
 
 if __name__ == '__main__':

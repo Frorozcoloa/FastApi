@@ -5,12 +5,28 @@ from models.index import vehiculos
 from sqlalchemy import text
 from datetime import datetime
 
+from Factura.index import create_pdf
+
 
 facturaApi = APIRouter()
 
-@facturaApi.post('/{celda}')
+@facturaApi.post('/precio/{celda}')
 async def create_facture(celda:int):
-    fecha = conn.execute(vehiculos.select().where(vehiculos.c.celda ==celda)).first()[2]
-    tiempo = datetime.now() - fecha 
+    hoy = datetime.now()
+    values = conn.execute(vehiculos.select().where(vehiculos.c.celda ==celda)).fetchall()
+    tiempo = hoy - values[0][2] 
     precio = tiempo.total_seconds()*100/60
-    print(round(precio))
+    datos = {'placa':values[0][1], 'fecha_in':values[0][2], 'fecha_out': hoy, 'total': precio, 'celda':values[0][0] }
+    create_pdf(datos)
+
+@facturaApi.get('/precio/{celda}')
+async def get_precio(celda:int):
+    hoy = datetime.now()
+    values = conn.execute(vehiculos.select().where(vehiculos.c.celda ==celda)).fetchall()
+    tiempo = hoy - values[0][2] 
+    precio = tiempo.total_seconds()*100/60
+    return {'Total': precio}
+
+    
+    
+    
